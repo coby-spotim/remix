@@ -1,7 +1,8 @@
 defmodule RemixTest do
   use ExUnit.Case
+  doctest(Remix)
 
-  test "the truth" do
-    assert 1 + 1 == 2
+  test "hello world" do
+    assert Remix.hello() == :world
   end
 end

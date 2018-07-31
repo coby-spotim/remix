@@ -13,7 +13,7 @@ defmodule Remix.Mixfile do
   end
 
   def application() do
-    [applications: [:logger], mod: {Remix, []}]
+    [applications: [:logger], mod: {Remix.Application, []}]
   end
 
   defp deps(), do: []
