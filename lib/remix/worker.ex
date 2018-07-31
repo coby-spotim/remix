@@ -1,9 +1,12 @@
 defmodule Remix.Worker do
   use GenServer
 
+  def start_link() do
+    GenServer.start_link(__MODULE__, %{}, name: Remix.Worker)
+  end
+
   def init(_args) do
     Process.send_after(__MODULE__, :poll_and_reload, 10000)
-    GenServer.start_link(__MODULE__, %{}, name: Remix.Worker)
   end
 
   def handle_info(:poll_and_reload, state) do
