@@ -1,13 +1,13 @@
 defmodule Remix.Worker do
   use GenServer
 
-  def start_link do
+  def init(_args) do
     Process.send_after(__MODULE__, :poll_and_reload, 10000)
     GenServer.start_link(__MODULE__, %{}, name: Remix.Worker)
   end
 
   def handle_info(:poll_and_reload, state) do
-    paths = Application.get_all_env(:remix)[:paths]
+    paths = Application.get_all_env(:updated_remix)[:paths]
 
     new_state =
       Map.new(paths, fn path ->

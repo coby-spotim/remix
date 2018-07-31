@@ -14,7 +14,7 @@ defmodule Remix.Mixfile do
       description: description(),
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
-      dialyzer: [plt_add_deps: :project]
+      dialyzer: [plt_add_deps: [:project], plt_add_apps: [:mix, :ex_unit]]
     ]
   end
 
