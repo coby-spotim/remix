@@ -3,13 +3,13 @@ defmodule Remix.Mixfile do
 
   def project do
     [
-      app: :updated_remix,
-      version: "0.1.2",
+      app: :remixed_remix,
+      version: "1.0.0",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
       package: package(),
-      name: "UpdatedRemix",
+      name: "RemixedRemix",
       source_url: "https://github.com/coby-spotim/remix",
       description: description(),
       deps: deps(),
@@ -20,7 +20,7 @@ defmodule Remix.Mixfile do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [extra_applications: [:logger], mod: {Remix.Application, []}]
+    [extra_applications: [:logger], mod: {RemixedRemix.Application, []}]
   end
 
   # Run "mix help deps" to learn about dependencies.

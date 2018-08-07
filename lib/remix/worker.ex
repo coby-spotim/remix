@@ -1,8 +1,11 @@
-defmodule Remix.Worker do
+defmodule RemixedRemix.Worker do
+  require Logger
   use GenServer
 
+  @paths Application.get_env(:remixed_remix, :paths, ["lib"])
+
   def start_link() do
-    GenServer.start_link(__MODULE__, %{}, name: Remix.Worker)
+    GenServer.start_link(__MODULE__, %{}, name: RemixedRemix.Worker)
   end
 
   def init(state) do
@@ -11,10 +14,8 @@ defmodule Remix.Worker do
   end
 
   def handle_info(:poll_and_reload, state) do
-    paths = Application.get_all_env(:updated_remix)[:paths]
-
     new_state =
-      Map.new(paths, fn path ->
+      Map.new(@paths, fn path ->
         current_mtime = get_current_mtime(path)
 
         last_mtime =
@@ -36,18 +37,18 @@ defmodule Remix.Worker do
     comp_elixir = fn -> Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"]) end
     comp_escript = fn -> Mix.Tasks.Escript.Build.run([]) end
 
-    case Application.get_all_env(:remix)[:silent] do
+    case Application.get_all_env(:remixed_remix)[:silent] do
       true ->
         ExUnit.CaptureIO.capture_io(comp_elixir)
 
-        if Application.get_all_env(:remix)[:escript] == true do
+        if Application.get_all_env(:remixed_remix)[:escript] == true do
           ExUnit.CaptureIO.capture_io(comp_escript)
         end
 
       _ ->
         comp_elixir.()
 
-        if Application.get_all_env(:remix)[:escript] == true do
+        if Application.get_all_env(:remixed_remix)[:escript] == true do
           comp_escript.()
         end
     end
@@ -69,11 +70,11 @@ defmodule Remix.Worker do
     |> List.first()
   end
 
-  def get_current_mtime([h | tail], mtimes, cwd) do
+  def get_current_mtime([head | tail], mtimes, cwd) do
     mtime =
-      case File.dir?("#{cwd}/#{h}") do
-        true -> get_current_mtime("#{cwd}/#{h}")
-        false -> File.stat!("#{cwd}/#{h}").mtime
+      case File.dir?("#{cwd}/#{head}") do
+        true -> get_current_mtime("#{cwd}/#{head}")
+        false -> File.stat!("#{cwd}/#{head}").mtime
       end
 
     get_current_mtime(tail, [mtime | mtimes], cwd)
