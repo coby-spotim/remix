@@ -84,9 +84,9 @@ defmodule RemixedRemix.Worker do
     get_current_mtime(tail, [mtime | mtimes], cwd)
   end
 
-  defp paths(), do: Application.get_env(:remixed_remix, :paths, default_paths())
+  defp paths, do: Application.get_env(:remixed_remix, :paths, default_paths())
 
-  defp default_paths() do
+  defp default_paths do
     if Mix.Project.umbrella?() do
       {:ok, apps} = File.ls("apps/")
       Enum.map(apps, fn x -> "apps/#{x}/lib" end)
@@ -95,7 +95,7 @@ defmodule RemixedRemix.Worker do
     end
   end
 
-  defp recursive_compile() do
+  defp recursive_compile do
     # Borrowed from Mix.Task with modification
     config = Mix.Project.deps_config() |> Keyword.delete(:deps_path)
 
