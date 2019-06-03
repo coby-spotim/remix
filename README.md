@@ -48,6 +48,13 @@ If these vars are not set, it will default to verbose (silent: false) and no esc
 
 Save or create a new file in the lib directory. Thats it!
 
+## Contributers
+
+Apparently I'm not the only one using this package, so people are fixing bugs and writing new functionality for the package here!
+
+Thanks to the contributers:
+- [Aaron Seigo](https://github.com/aseigo)
+
 ## License
 
 The Remixed_Remix source code is released under the MIT License. Check LICENSE file for more information.
