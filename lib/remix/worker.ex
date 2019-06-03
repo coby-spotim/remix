@@ -2,9 +2,7 @@ defmodule RemixedRemix.Worker do
   require Logger
   use GenServer
 
-  @paths Application.get_env(:remixed_remix, :paths, ["lib"])
-
-  def start_link() do
+  def start_link do
     GenServer.start_link(__MODULE__, %{}, name: RemixedRemix.Worker)
   end
 
@@ -15,7 +13,7 @@ defmodule RemixedRemix.Worker do
 
   def handle_info(:poll_and_reload, state) do
     new_state =
-      Map.new(@paths, fn path ->
+      Map.new(paths(), fn path ->
         current_mtime = get_current_mtime(path)
 
         last_mtime =
@@ -34,7 +32,13 @@ defmodule RemixedRemix.Worker do
   def handle_path(path, current_mtime, current_mtime), do: {path, current_mtime}
 
   def handle_path(path, current_mtime, _) do
-    comp_elixir = fn -> Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"]) end
+    comp_elixir =
+      if Mix.Project.umbrella?() do
+        fn -> Mix.ProjectStack.recur(fn -> recursive_compile() end) end
+      else
+        fn -> Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"]) end
+      end
+
     comp_escript = fn -> Mix.Tasks.Escript.Build.run([]) end
 
     case Application.get_all_env(:remixed_remix)[:silent] do
@@ -78,5 +82,26 @@ defmodule RemixedRemix.Worker do
       end
 
     get_current_mtime(tail, [mtime | mtimes], cwd)
+  end
+
+  defp paths, do: Application.get_env(:remixed_remix, :paths, default_paths())
+
+  defp default_paths do
+    if Mix.Project.umbrella?() do
+      {:ok, apps} = File.ls("apps/")
+      Enum.map(apps, fn x -> "apps/#{x}/lib" end)
+    else
+      ["lib"]
+    end
+  end
+
+  defp recursive_compile do
+    # Borrowed from Mix.Task with modification
+    config = Mix.Project.deps_config() |> Keyword.delete(:deps_path)
+
+    for %Mix.Dep{app: app, opts: opts} <- Mix.Dep.Umbrella.cached() do
+      Mix.Project.in_project(app, opts[:path], config,
+                             fn _ -> Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"]) end)
+    end
   end
 end
