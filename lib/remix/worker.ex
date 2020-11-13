@@ -2,12 +2,14 @@ defmodule RemixedRemix.Worker do
   require Logger
   use GenServer
 
-  def start_link do
-    GenServer.start_link(__MODULE__, %{}, name: RemixedRemix.Worker)
+  @name __MODULE__
+
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, %{}, name: @name)
   end
 
   def init(state) do
-    Process.send_after(__MODULE__, :poll_and_reload, 10000)
+    Process.send_after(@name, :poll_and_reload, 10000)
     {:ok, state}
   end
 
@@ -25,7 +27,7 @@ defmodule RemixedRemix.Worker do
         handle_path(path, current_mtime, last_mtime)
       end)
 
-    Process.send_after(__MODULE__, :poll_and_reload, 1000)
+    Process.send_after(@name, :poll_and_reload, 1000)
     {:noreply, new_state}
   end
 
@@ -100,8 +102,9 @@ defmodule RemixedRemix.Worker do
     config = Mix.Project.deps_config() |> Keyword.delete(:deps_path)
 
     for %Mix.Dep{app: app, opts: opts} <- Mix.Dep.Umbrella.cached() do
-      Mix.Project.in_project(app, opts[:path], config,
-                             fn _ -> Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"]) end)
+      Mix.Project.in_project(app, opts[:path], config, fn _ ->
+        Mix.Tasks.Compile.Elixir.run(["--ignore-module-conflict"])
+      end)
     end
   end
 end
