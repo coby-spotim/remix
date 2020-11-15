@@ -54,6 +54,7 @@ Apparently I'm not the only one using this package, so people are fixing bugs an
 
 Thanks to the contributers:
 - [Aaron Seigo](https://github.com/aseigo)
+- [Stefan Fochler](https://github.com/iStefo)
 
 ## License
 
