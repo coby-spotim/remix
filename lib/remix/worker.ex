@@ -80,7 +80,10 @@ defmodule RemixedRemix.Worker do
     mtime =
       case File.dir?("#{cwd}/#{head}") do
         true -> get_current_mtime("#{cwd}/#{head}")
-        false -> File.stat!("#{cwd}/#{head}").mtime
+        false -> case File.stat("#{cwd}/#{h}") do
+          {:error, :enoent} -> nil
+          {:ok, s} -> s.mtime
+        end
       end
 
     get_current_mtime(tail, [mtime | mtimes], cwd)
