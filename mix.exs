@@ -10,7 +10,7 @@ defmodule Remix.Mixfile do
       start_permanent: Mix.env() == :prod,
       package: package(),
       name: "RemixedRemix",
-      source_url: "https://github.com/coby-spotim/remix",
+      source_url: "https://github.com/probably-not/remix",
       description: description(),
       deps: deps(),
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -34,7 +34,7 @@ defmodule Remix.Mixfile do
       licenses: ["MIT"],
       maintainers: ["Coby Benveniste"],
       links: %{
-        "GitHub" => "https://github.com/coby-spotim/remix"
+        "GitHub" => "https://github.com/probably-not/remix"
       }
     ]
   end
